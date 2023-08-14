@@ -25,3 +25,8 @@ Lab 4: Scalable database performance via sharding
 go run Lecture/02-crawler.go
 ```
 
+### Google File System
+[03-GFS](./Lecture/03-GFS.md)     
+parallel Performance -> Sharding   
+Faults -> Tolerance -> Replication -> Consistency -> Low Performance
+[03-Q&A](./Lecture/03-faq.md)  
