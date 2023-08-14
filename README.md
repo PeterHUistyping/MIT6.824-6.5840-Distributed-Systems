@@ -11,9 +11,8 @@ Lab 4: Scalable database performance via sharding
 
 ## Lecture Note
 
-[01-Intro](./Lecture/01-Intro.md)
-[01-MapReduce Google](./Lecture/01-MapReduce.md)
-[MapReduce: Simplified Data Processing on Large Clusters Google](./Paper/01-mapreduce.pdf)
+[01-Intro](./Lecture/01-Intro.md)  
+[01-MapReduce Google](./Lecture/01-MapReduce.md)  
+[MapReduce: Simplified Data Processing on Large Clusters Google](./Paper/01-mapreduce.pdf)  
 
 <img src="./Paper/01-Execution.png" alt="Execution Diagram " width= "80%">
-
