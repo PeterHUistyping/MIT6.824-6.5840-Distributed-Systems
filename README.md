@@ -10,9 +10,18 @@ Lab 3: a simple Fault-Tolerant database
 Lab 4: Scalable database performance via sharding
 
 ## Lecture Note
-
+### Map Reduce
 [01-Intro](./Lecture/01-Intro.md)  
 [01-MapReduce Google](./Lecture/01-MapReduce.md)  
 [MapReduce: Simplified Data Processing on Large Clusters Google](./Paper/01-mapreduce.pdf)  
 
 <img src="./Paper/01-Execution.png" alt="Execution Diagram " width= "80%">
+
+### Concurrency in Go
+[02-Threads_RPC](./Lecture/02-Threads_RPC.md)     
+[02-Go-Q&A](./Lecture/02-faq.md)  
+[02-crawler.go](./Lecture/02-crawler.go)   
+```
+go run Lecture/02-crawler.go
+```
+
