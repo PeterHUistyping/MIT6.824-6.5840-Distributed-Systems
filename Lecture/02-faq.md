@@ -17,8 +17,21 @@ Q: How do Go channels work? How does Go make sure they are synchronized between 
 A: You can see the source at https://golang.org/src/runtime/chan.go,
 though it is not easy to follow.
 
-At a high level, a chan is a struct holding a buffer and a lock.
+At a high level, a chan is a struct holding a buffer and a lock. (Like pipe)
 Sending on a channel involves acquiring the lock, waiting (perhaps releasing the CPU) until some thread is receiving, and handing off the message. Receiving involves acquiring the lock and waiting for a sender. You could implement your own channels with Go sync.Mutex x and sync.Cond.
+
+```go
+Mutex mu;
+mu.lock()
+n = n+1
+mu.unlock()
+```
+
+```go
+LD X R
+ADD 1 R
+ST R X
+```
 
 Q: I'm using a channel to wake up another goroutine, by sending a dummy bool on the channel.
 
@@ -26,7 +39,7 @@ But if that other goroutine is already running (and thus not receiving on the ch
 blocks. What should I do?
 
 A: Try condition variables (Go's sync.Cond) rather than channels.
-Condition variables work well to alert goroutines that may (or may not) be waiting for something. 
+Condition variables work well to alert goroutines that may (or may not) be waiting for something.
 
 Channels, because they are synchronous, are awkward if you're not sure if there will be a goroutine waiting at the other end of the channel.
 
@@ -39,7 +52,7 @@ Otherwise try Go's select.
 
 Q: When should we use sync.WaitGroup instead of channels? and vice versa?
 
-A: WaitGroup is fairly special-purpose; it's only useful when waiting for a bunch of activities to complete. Channels are more general-purpose; for example, you can communicate values over channels. You can wait for multiple goroutines using channels, though it
+A: WaitGroup is fairly special-purpose; it's only useful when waiting for **a bunch of activities**  to complete (like Semaphore). Channels are more general-purpose; for example, you can communicate values over channels. You can wait for multiple goroutines using channels, though it
 takes a few more lines of code than with WaitGroup.
 
 Q: I need my code to perform a task once per second. What's the easiest way to do that?
@@ -140,10 +153,10 @@ receivers. Can you provide any concrete/real-world examples of when we
 would choose one over the other?
 
 A: When you want to modify the state of the receiver, you have to use
-pointer receivers.  
+pointer receivers.
 
-If the struct is very big, you probably want to use a pointer receiver because value receivers operate on a copy.  
+If the struct is very big, you probably want to use a pointer receiver because value receivers operate on a copy.
 
-If neither applies, you can use a value receiver.  
+If neither applies, you can use a value receiver.
 
 However, be careful with value receivers; e.g., if you have a mutex in a struct, you cannot make it a value receiver, because the mutex would be copied, defeating its purpose.

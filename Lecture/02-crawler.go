@@ -15,6 +15,7 @@ import (
 //
 
 func Serial(url string, fetcher Fetcher, fetched map[string]bool) {
+	// fetched : a set for storing url that has been seen before
 	if fetched[url] {
 		return
 	}
@@ -38,6 +39,7 @@ type fetchState struct {
 	fetched map[string]bool
 }
 
+// read_and_set atomic
 func (fs *fetchState) testAndSet(url string) bool {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
