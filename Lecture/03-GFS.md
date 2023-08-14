@@ -52,7 +52,7 @@ Fault tolerance story?
 1. C sends filename and offset to coordinator (CO) (if not cached)
    CO has a filename -> array-of-chunkhandle table
    and a chunkhandle -> list-of-chunkservers table
-2. CO finds chunk handle for that offset
+2. CO finds chunk handle for that offset (cached)
 3. CO replies with chunkhandle + list of chunkservers
 4. C caches handle + chunkserver list
 5. C sends request to nearest chunkserver
@@ -106,17 +106,17 @@ What are the steps when C wants to write a file at some offset?
 
 GFS guarantees to applications -- consistency (Table 1)
   somewhat complex!
-  if primary tells client that a write succeeded,
+  If primary tells client that a write succeeded,
     and no other client is writing the same part of the file,
     all readers will see the write.
     "defined"
-  if successful concurrent writes to the same part of a file,
+  If successful concurrent writes to the same part of a file,
     and they all succeed,
     all readers will see the same content,
     but maybe it will be a mix of the writes.
     "consistent"
     E.g. C1 writes "ab", C2 writes "xy", everyone might see "axyb".
-  if primary doesn't tell the client that the write succeeded,
+  If primary doesn't tell the client that the write succeeded,
     different readers may see different content, or none.
     "inconsistent"
 
@@ -124,15 +124,14 @@ How can inconsistent content arise?
   Primary P updated its own state.
   But secondary S1 did not update (failed? slow? network problem?).
   Client C1 reads from P; Client C2 reads from S1.
-    they will see different results!
+    They will see different results!
   Such a departure from ideal behavior is an "anomaly".
   But note that in this case the primary would have returned
     an error to the writing client.
 
 How can consistent but undefined arise?
   Clients break big writes into multiple small writes,
-  e.g. at chunk boundaries, and GFS may interleave
-    them if concurrent client writes.
+  e.g. at chunk boundaries, and GFS may interleave them if concurrent client writes.
 
 How can duplicated data arise?
   Clients re-try record appends.
@@ -201,12 +200,11 @@ What is a lease?
   Separate lease per actively written chunk.
 
 Why are leases helpful?
-  The coordinator must be able to designate a new primary if the present
-    primary fails.
+  The coordinator must be able to designate a new primary if the present primary fails.
   But the coordinator cannot distinguish "primary has failed" from
     "primary is still alive but the network has a problem."
   What if the coordinator designates a new primary while old one is active?
-    two active primaries!
+    Two active primaries!
     C1 writes to P1, C2 reads from P2, doesn't seen C1's write!
     called "split brain" -- a disaster
   Leases help prevent split brain:
@@ -305,7 +303,8 @@ Retrospective interview with GFS engineer:
   BigTable is one answer to many-small-files problem
   and Colossus apparently shards coordinator data over many coordinators
 
-Summary
+## Summary
+
   case study of performance, fault-tolerance, consistency
     specialized for MapReduce applications
   good ideas:
