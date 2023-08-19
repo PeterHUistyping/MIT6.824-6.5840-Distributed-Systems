@@ -77,7 +77,7 @@ At what level do we want replicas to be identical?
     requires forwarding of machine events (interrupts, network packets, &c)
     requires "machine" modifications to send/recv event stream...
 
-## Today's paper (VMware FT) replicates machine-level state
+## VMware FT Paper replicates machine-level state
 
   Transparent: can run any existing O/S and server software!
   Appears like a single server to clients
