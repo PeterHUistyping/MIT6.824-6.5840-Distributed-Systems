@@ -34,4 +34,8 @@ go run Lecture/02-crawler.go
 [03-GFS](./Lecture/03-GFS.md)
 parallel Performance -> Sharding
 Faults -> Tolerance -> Replication -> Consistency -> Low Performance
-[03-Q&amp;A](./Lecture/03-faq.md)
+[03-Q&A](./Lecture/03-faq.md)
+
+## Fault Tolerance
+[04-vm-ft](./Lecture/04-vm-ft.md)
+[04-VMware FT-Q&A](./Lecture/04-faq.md)

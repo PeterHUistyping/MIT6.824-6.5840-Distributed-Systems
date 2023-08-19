@@ -158,21 +158,20 @@ What might better consistency look like?
     * all readers see the same content (assuming no writes).
   We'll see more precision later.
 
-Let's think about how GFS handles crashes of various entities.
+## Crashes Handle
 
-A client crashes while writing?
+### A client crashes while writing?
+
   Either it got as far as asking primary to write, or not.
 
-A secondary crashes just as the primary asks it to write?
+### A secondary crashes just as the primary asks it to write?
 
-1. Primary may retry a few times, if secondary revives quickly
-   with disk intact, it may execute the primary's request
-   and all is well.
+1. Primary may retry a few times, if secondary revives quickly with disk intact, it may execute the primary's request and all is well.
 2. Primary gives up, and returns an error to the client.
    Client can retry -- but why would the write work the second time around?
 3. Coordinator notices that a chunkserver is down.
    Periodically pings all chunk servers.
-   Removes the failed chunkserver from all chunkhandle lists.
+   **Removes the failed chunkserver from all chunkhandle lists.**
    Perhaps re-replicates, to maintain 3 replicas.
    Tells primary the new secondary list.
 
@@ -187,13 +186,14 @@ Re-replication after a chunkserver failure may take a Long Time.
     Too short: wasted copying work if chunkserver comes back to life.
     Too long: more failures might destroy all copies of data.
 
-What if a primary crashes?
+### What if a primary crashes?
+
   Remove that chunkserver from all chunkhandle lists.
   For each chunk for which it was primary,
     wait for lease to expire,
     grant lease to another chunkserver holding that chunk.
 
-What is a lease?
+What is a **lease**?
   Permission to act as primary for a given time (60 seconds).
   Primary promises to stop acting as primary before lease expires.
   Coordinator promises not to change primaries until after expiration.
@@ -211,7 +211,8 @@ Why are leases helpful?
     Coordinator won't designate new primary until the current one is
     guaranteed to have stopped acting as primary.
 
-What if the coordinator crashes?
+### What if the coordinator crashes?
+
   Two strategies.
 
 1. Coordinator writes critical state to its disk.
@@ -273,7 +274,10 @@ What would it take to have no anomalies -- strict consistency?
   So multiple primaries, maybe write goes to one, read to the other.
   Again, read may yield "success" but wrong data -- byzantine failure.
 
-Performance (Figure 3)
+## Performance
+
+ (Figure 3)
+
   large aggregate throughput for read
     94 MB/sec total for 16 clients + 16 chunkservers
       or 6 MB/second per client
@@ -297,26 +301,25 @@ Retrospective interview with GFS engineer:
     coordinator scanning of all files/chunks for GC is slow
   1000s of clients -> too much CPU load on coordinator
   coordinator fail-over initially manual, 10s of minutes, too long.
-  applications had to be designed to cope with GFS semantics
-    and limitations.
+  applications had to be designed to cope with GFS semantics and limitations.
     more painful than expected.
   BigTable is one answer to many-small-files problem
   and Colossus apparently shards coordinator data over many coordinators
 
 ## Summary
 
-  case study of performance, fault-tolerance, consistency
+  Case study of performance, fault-tolerance, consistency
     specialized for MapReduce applications
-  good ideas:
+  Good ideas:
     global cluster file system as universal infrastructure
     separation of naming (coordinator) from storage (chunkserver)
     sharding for parallel throughput
     huge files/chunks to reduce overheads
     primary to choose order for concurrent writes
     leases to prevent split-brain
-  not so great:
+  Not so great:
     single coordinator performance
-      ran out of RAM and CPU
+    ran out of RAM and CPU
     chunkservers not very efficient for small files
     lack of automatic fail-over to coordinator replica
     maybe consistency was too relaxed
